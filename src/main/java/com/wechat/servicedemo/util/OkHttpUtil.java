@@ -6,7 +6,7 @@ import okhttp3.*;
 
 /**
 *@Author: ZhangZhe
-*@Description  利用okhttp进行get和post访问
+*@Description  利用okhttp进行get和post访问微信API
 *@Date: 2018/1/19
 */
 

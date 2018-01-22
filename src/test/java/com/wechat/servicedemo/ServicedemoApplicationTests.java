@@ -1,12 +1,17 @@
 package com.wechat.servicedemo;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wechat.servicedemo.operate.UserGet;
 import com.wechat.servicedemo.util.OkHttpUtil;
 import com.wechat.servicedemo.util.WXUtil;
+import com.wechat.servicedemo.util.WxList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RunWith(SpringRunner.class)
@@ -38,7 +43,23 @@ public class ServicedemoApplicationTests {
 
 	@Test
 	public void postTest() {
-		WXUtil.sendMessage();
+
+//		单用户消息推送
+		WXUtil.sendMessageToUser("zhangzhe");
+
+//		群体推送
+//		WXUtil.sendMessageToUserList();
+
+
+//		Map<String, String> map = new HashMap<>();
+//		map = UserGet.userGet();
+//		for (Map.Entry<String, String> entry: map.entrySet()) {
+//			System.out.println("key=" + entry.getKey() + " " + "value=" + entry.getValue());
+//		}
+//		String openId = map.get("zhangzhe");
+//		System.out.println("openId = " + openId);
+
+
 
 		//行业
 //		StringBuffer industry = new StringBuffer();

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
 *@Author: ZhangZhe
-*@Description       AccessToken
+*@Description       AccessToken类
 *@Date: 2018/1/16
 */
 

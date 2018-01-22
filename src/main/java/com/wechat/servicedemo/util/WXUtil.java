@@ -1,80 +1,68 @@
 package com.wechat.servicedemo.util;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wechat.servicedemo.entity.*;
+import com.wechat.servicedemo.operate.DataGet;
+import com.wechat.servicedemo.operate.UserGet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
 *@Author: ZhangZhe
-*@Description
+*@Description       实现消息推送方法
 *@Date: 2018/1/19
 */
 public class WXUtil {
 
-    private static String SEND_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN";
+    private static final Logger LOGGER = LoggerFactory.getLogger(WXUtil.class);
 
-    public static void sendMessage() {
-
+    public static AccessToken accessToken() {
         AccessToken token = null;
-
         //获取access_token
         if (null == TokenThread.accessToken || "".equals(TokenThread.accessToken.getAccessToken())) {
             token = GetAccessTokenUtil.getAccessToken(InfoUtil.APP_ID, InfoUtil.APP_SECRET);
         } else {
             token = TokenThread.accessToken;
         }
-
-        String url = SEND_MESSAGE_URL.replace("ACCESS_TOKEN", token.getAccessToken()).replace(" ", "");
-        System.out.println("url = " + url);
-
-        WxTemplate wxTemplate = new WxTemplate();
-        Map<String, TemplateData> map = new HashMap<String, TemplateData>();
-        TemplateData first = new TemplateData();
-        first.setColor("#ff0000");
-        first.setValue("你好啊欢迎你");
-        map.put("first", first);
-
-        TemplateData product = new TemplateData();
-        product.setColor("#ff0000");
-        product.setValue("大宝剑");
-        map.put("product", product);
-
-        TemplateData price = new TemplateData();
-        price.setColor("#ff0000");
-        price.setValue("100$");
-        map.put("price", price);
-
-        TemplateData time = new TemplateData();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        time.setColor("#ff0000");
-        time.setValue(df.format(new Date()));
-        map.put("time", time);
-
-        TemplateData remark = new TemplateData();
-        remark.setColor("#ff0000");
-        remark.setValue("欢迎下次再来");
-        map.put("remark", remark);
-
-        wxTemplate.setTouser("o3tk61V1Okg754B3baaJdIbDY9h8");
-        wxTemplate.setTopcolor("#ff0000");
-        wxTemplate.setTemplate_id("YqZFokb3hxUuo72zCiGny4D0QuPNqVPdWa4tG-FDad8");
-        wxTemplate.setData(map);
-
-        String data = JSON.toJSONString(wxTemplate);
-        System.out.println("jsonstr = " + data);
-
-        JSONObject jsonObject = OkHttpUtil.httpPost(url, data);
-        if (null == jsonObject) {
-            System.out.println("发送失败");
-        } else {
-            System.out.println("发送成功");
-        }
-
+        return token;
     }
 
+
+    /**
+     * 推送给个人
+     * @param userName
+     */
+    public static void sendMessageToUser(String userName) {
+        //接收模板消息内容
+        String data = DataGet.dataGet(userName);
+        AccessToken accessToken = accessToken();
+        //获取消息发送接口
+        String url = InfoUtil.SEND_MESSAGE_URL.replace("ACCESS_TOKEN", accessToken.getAccessToken()).replace(" ", "");
+        JSONObject jsonObject = OkHttpUtil.httpPost(url, data);
+        if (null == jsonObject) {
+            LOGGER.info("=============消息推送失败======================");
+        } else {
+            LOGGER.info("=============消息推送成功======================");
+        }
+    }
+
+    public static void sendMessageToUserList() {
+        Map<String, String> map = new HashMap<>();
+        AccessToken accessToken = accessToken();
+        String url = InfoUtil.SEND_MESSAGE_URL.replace("ACCESS_TOKEN", accessToken.getAccessToken()).replace(" ", "");
+        map = UserGet.userGet();
+        int count = 0;
+        JSONObject jsonObject = new JSONObject();
+        for (Map.Entry<String, String> entry: map.entrySet()) {
+            String data = DataGet.dataGet(entry.getKey());
+            jsonObject = OkHttpUtil.httpPost(url, data);
+            count++;
+        }
+        LOGGER.info("========共成功推送了:" + count + "人==============" );
+//        System.out.println("共成功推送了：" + count + "人");
+    }
 }
+

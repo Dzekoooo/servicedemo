@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
 *@Author: ZhangZhe
-*@Description       模板数据
+*@Description       整体模板数据
 *@Date: 2018/1/19
 */
 public class TemplateData implements Serializable {

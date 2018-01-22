@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
 *@Author: ZhangZhe
-*@Description       模板基类
+*@Description       模板data
 *@Date: 2018/1/19
 */
 public class WxTemplate implements Serializable{
