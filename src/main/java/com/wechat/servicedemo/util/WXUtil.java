@@ -1,9 +1,12 @@
 package com.wechat.servicedemo.util;
 
-import com.wechat.servicedemo.entity.AccessToken;
-import com.wechat.servicedemo.entity.TemplateData;
-import com.wechat.servicedemo.entity.WxTemplate;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.wechat.servicedemo.entity.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,7 +15,11 @@ import java.util.Map;
 *@Date: 2018/1/19
 */
 public class WXUtil {
-    public static void sendMessage(String template_id, WxTemplate wxTemplate, Map<String, TemplateData> map) {
+
+    private static String SEND_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN";
+
+    public static void sendMessage() {
+
         AccessToken token = null;
 
         //获取access_token
@@ -22,9 +29,52 @@ public class WXUtil {
             token = TokenThread.accessToken;
         }
 
-        int result = 0;
+        String url = SEND_MESSAGE_URL.replace("ACCESS_TOKEN", token.getAccessToken()).replace(" ", "");
+        System.out.println("url = " + url);
+
+        WxTemplate wxTemplate = new WxTemplate();
+        Map<String, TemplateData> map = new HashMap<String, TemplateData>();
+        TemplateData first = new TemplateData();
+        first.setColor("#ff0000");
+        first.setValue("你好啊欢迎你");
+        map.put("first", first);
+
+        TemplateData product = new TemplateData();
+        product.setColor("#ff0000");
+        product.setValue("大宝剑");
+        map.put("product", product);
+
+        TemplateData price = new TemplateData();
+        price.setColor("#ff0000");
+        price.setValue("100$");
+        map.put("price", price);
+
+        TemplateData time = new TemplateData();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        time.setColor("#ff0000");
+        time.setValue(df.format(new Date()));
+        map.put("time", time);
+
+        TemplateData remark = new TemplateData();
+        remark.setColor("#ff0000");
+        remark.setValue("欢迎下次再来");
+        map.put("remark", remark);
+
+        wxTemplate.setTouser("o3tk61V1Okg754B3baaJdIbDY9h8");
+        wxTemplate.setTopcolor("#ff0000");
+        wxTemplate.setTemplate_id("YqZFokb3hxUuo72zCiGny4D0QuPNqVPdWa4tG-FDad8");
+        wxTemplate.setData(map);
+
+        String data = JSON.toJSONString(wxTemplate);
+        System.out.println("jsonstr = " + data);
+
+        JSONObject jsonObject = OkHttpUtil.httpPost(url, data);
+        if (null == jsonObject) {
+            System.out.println("发送失败");
+        } else {
+            System.out.println("发送成功");
+        }
 
     }
-
 
 }

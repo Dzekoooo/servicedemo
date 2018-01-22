@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Test {
+
+    private static String SEND_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN";
+
     public static void main(String[] args) {
         AccessToken token = null;
 
@@ -26,9 +29,6 @@ public class Test {
 //        }
 
         WxTemplate wxTemplate = new WxTemplate();
-        wxTemplate.setTouser("o3tk61V1Okg754B3baaJdIbDY9h8");
-        wxTemplate.setTopcolor("#000000");
-        wxTemplate.setTemplate_id("YqZFokb3hxUuo72zCiGny4D0QuPNqVPdWa4tG-FDad8");
 
         Map<String, TemplateData> map = new HashMap<String, TemplateData>();
         TemplateData first = new TemplateData();
@@ -56,12 +56,26 @@ public class Test {
         remark.setColor("#000000");
         remark.setValue("欢迎下次再来");
         map.put("remark", remark);
-        for (Map.Entry<String, TemplateData> entry: map.entrySet()) {
-            System.out.println("{" + entry.getKey() + entry.getValue() + "}");
-            String str = entry.getKey() + entry.getValue();
-            System.out.println("str = " + str);
-//            JSONObject jsonObject = JSON.parseObject(str);
-//            System.out.println("jsonObject = " + jsonObject);
+
+        wxTemplate.setTouser("o3tk61V1Okg754B3baaJdIbDY9h8");
+        wxTemplate.setTopcolor("#000000");
+        wxTemplate.setTemplate_id("YqZFokb3hxUuo72zCiGny4D0QuPNqVPdWa4tG-FDad8");
+        wxTemplate.setData(map);
+
+        String jsonstr = JSON.toJSONString(wxTemplate);
+        System.out.println("jsonstr = " + jsonstr);
+
+
+
+        //获取access_token
+        if (null == TokenThread.accessToken || "".equals(TokenThread.accessToken.getAccessToken())) {
+            token = GetAccessTokenUtil.getAccessToken(InfoUtil.APP_ID, InfoUtil.APP_SECRET);
+        } else {
+            token = TokenThread.accessToken;
         }
+
+        String url = SEND_MESSAGE_URL.replace("ACCESS_TOKEN", token.getAccessToken()).replace(" ", "");
+        System.out.println("url = " + url);
+
     }
 }
